@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAFSHIKAN — Aerial Agri Solutions</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════
+     INTRO SCREEN
+══════════════════════════════════════════ -->
+  <div id="intro-screen">
+    <div class="intro-inner">
+      <div class="intro-wordmark">SAFSHIKAN</div>
+      <div class="intro-rule"></div>
+      <div class="intro-caption">Aerial Agri Solutions · Est. Punjab, Pakistan</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     BACKGROUND
+══════════════════════════════════════════ -->
+  <div class="bg-layer">
+    <video class="bg-video" autoplay muted loop playsinline preload="auto">
+      <source src="https://res.cloudinary.com/dvulzqrc5/video/upload/v1774968139/Beach.mp4_cz6j2r.mp4" type="video/mp4">
+    </video>
+
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-glow g1"></div>
+    <div class="bg-glow g2"></div>
+    <div class="bg-glow g3"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════ -->
+  <header id="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="16,2 30,10 30,22 16,30 2,22 2,10" stroke="#9CAF88" stroke-width="1.2" fill="none" />
+          <circle cx="16" cy="16" r="4" fill="#9CAF88" opacity="0.9" />
+          <line x1="16" y1="6" x2="16" y2="12" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+          <line x1="16" y1="20" x2="16" y2="26" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+          <line x1="6" y1="12" x2="11" y2="14.5" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+          <line x1="21" y1="17.5" x2="26" y2="20" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+          <line x1="6" y1="20" x2="11" y2="17.5" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+          <line x1="21" y1="14.5" x2="26" y2="12" stroke="#9CAF88" stroke-width="1" opacity="0.6" />
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">SAFSHIKAN</span>
+          <span class="logo-sub">Aerial Agri Solutions</span>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <a class="nav-item active" onclick="showPage('home')">Home</a>
+        <a class="nav-item" onclick="showPage('order')">Services</a>
+        <a class="nav-item" href="#about-section">About</a>
+        <a class="nav-item" href="#contact-section">Contact</a>
+      </nav>
+
+      <div class="header-cta">
+        <div class="status-dot"></div>
+        <span class="status-text">Fleet Active</span>
+        <button class="btn-primary" onclick="showPage('order')">Request Service</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════ -->
+  <div id="page-home" class="page active">
+    <main class="home-main">
+
+      <!-- Hero Section -->
+      <section class="hero-section">
+
+        <!-- NEW ROW -->
+        <div class="hero-row">
+
+          <!-- LEFT: TEXT -->
+          <div class="hero-content">
+            <div class="hero-badge">
+              <span class="badge-dot"></span>
+              Precision Agriculture · Punjab, Pakistan
+            </div>
+
+            <h1 class="hero-title">
+              Advanced Drone<br>
+              <em>Solutions for</em><br>
+              Modern Farming
+            </h1>
+
+            <p class="hero-desc">
+              We deliver precision aerial spraying, high-resolution land mapping, and
+              data-driven crop intelligence — empowering Punjab's farmers to maximise
+              yield with minimal intervention.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn-primary large" onclick="showPage('order')">Order a Service</button>
+              <button class="btn-ghost large" onclick="scrollTo('#about-section')">Learn More</button>
+            </div>
+          </div>
+
+          <!-- RIGHT: VIDEO -->
+          <div class="hero-media">
+            <video autoplay muted loop playsinline>
+              <source
+                src="https://res.cloudinary.com/dvulzqrc5/video/upload/v1774970083/Big_drone_Try_To_Fly_dronewaly_bzhs8u.mp4"
+                type="video/mp4">
+            </video>
+          </div>
+
+        </div>
+
+        <!-- KEEP YOUR METRICS BELOW -->
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <div class="metric-num">247<span>+</span></div>
+            <div class="metric-label">Farms Served</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-num">12k<span>+</span></div>
+            <div class="metric-label">Acres Covered</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-num">98<span>%</span></div>
+            <div class="metric-label">Client Satisfaction</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-num">5<span>yr</span></div>
+            <div class="metric-label">In Operation</div>
+          </div>
+        </div>
+
+      </section>
+      <!-- Navigation Cards -->
+      <section class="nav-cards" id="services-section">
+        <div class="section-eyebrow">Our Services</div>
+        <h2 class="section-title">What We Offer</h2>
+
+        <div class="cards-grid">
+
+          <div class="service-card featured" onclick="showPage('order', 'spray')">
+            <div class="card-icon">
+              <svg viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+                <path d="M12 24 Q20 12 28 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  fill="none" />
+                <circle cx="20" cy="26" r="3" fill="currentColor" />
+                <path d="M16 30 Q20 28 24 30" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                  fill="none" opacity="0.6" />
+                <path d="M14 33 Q20 30 26 33" stroke="currentColor" stroke-width="1" stroke-linecap="round" fill="none"
+                  opacity="0.35" />
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="card-tag">Most Popular</div>
+              <h3 class="card-title">Aerial Spraying</h3>
+              <p class="card-desc">Precision pesticide and fertiliser application with GPS-guided drone coverage for
+                uniform distribution across all terrain types.</p>
+              <div class="card-action">
+                Order Now
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-card" onclick="showPage('order', 'mapping')">
+            <div class="card-icon">
+              <svg viewBox="0 0 40 40" fill="none">
+                <rect x="8" y="8" width="24" height="24" rx="3" stroke="currentColor" stroke-width="1.2"
+                  opacity="0.3" />
+                <path d="M8 16h24M8 24h24M16 8v24M24 8v24" stroke="currentColor" stroke-width="0.8" opacity="0.4" />
+                <circle cx="20" cy="20" r="4" fill="currentColor" opacity="0.8" />
+                <circle cx="20" cy="20" r="2" fill="none" stroke="white" stroke-width="1" />
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="card-tag">Mapping</div>
+              <h3 class="card-title">Land Mapping</h3>
+              <p class="card-desc">High-resolution topographic surveys, boundary delineation, and 3D terrain modelling
+                for precise agricultural planning.</p>
+              <div class="card-action">
+                Order Now
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-card" onclick="showPage('order', 'report')">
+            <div class="card-icon">
+              <svg viewBox="0 0 40 40" fill="none">
+                <rect x="9" y="6" width="22" height="28" rx="2" stroke="currentColor" stroke-width="1.2"
+                  opacity="0.3" />
+                <path d="M13 14h14M13 19h14M13 24h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                  opacity="0.7" />
+                <path d="M24 26l3-4 3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                  stroke-linejoin="round" fill="none" opacity="0.9" />
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="card-tag">Analytics</div>
+              <h3 class="card-title">Crop Health Report</h3>
+              <p class="card-desc">NDVI multispectral analysis, yield forecasting and field-level assessments delivered
+                as comprehensive data reports.</p>
+              <div class="card-action">
+                Order Now
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-card" onclick="showPage('order', 'help')">
+            <div class="card-icon">
+              <svg viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="14" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+                <circle cx="20" cy="14" r="4" fill="currentColor" opacity="0.8" />
+                <path d="M12 30c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" fill="none" />
+              </svg>
+            </div>
+            <div class="card-body">
+              <div class="card-tag">Support</div>
+              <h3 class="card-title">Expert Consultation</h3>
+              <p class="card-desc">One-on-one advisory sessions with our agri-tech specialists for operational guidance,
+                crop strategy, and onboarding support.</p>
+              <div class="card-action">
+                Book Session
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="about-section" id="about-section">
+        <div class="about-left">
+          <div class="section-eyebrow">About Safshikan</div>
+          <h2 class="section-title">Redefining Agri-Tech<br>in Punjab</h2>
+          <p class="about-text">
+            Founded in Punjab, Pakistan, Safshikan bridges the gap between modern drone
+            technology and traditional farming. Our certified operators work alongside
+            local farmers to deliver measurable results — higher yields, reduced input
+            costs, and sustainable practices.
+          </p>
+          <p class="about-text">
+            With a fleet of advanced agricultural drones and a team of experienced agri-tech
+            professionals, we have serviced over 247 farms across Punjab, covering more
+            than 12,000 acres with precision aerial solutions.
+          </p>
+          <div class="about-certifications">
+            <div class="cert">
+              <span class="cert-icon">✦</span>
+              CAA Certified Operators
+            </div>
+            <div class="cert">
+              <span class="cert-icon">✦</span>
+              ISO 9001 Quality Standard
+            </div>
+            <div class="cert">
+              <span class="cert-icon">✦</span>
+              Punjab Agriculture Approved
+            </div>
+          </div>
+        </div>
+        <div class="about-right">
+          <div class="about-stat-block">
+            <div class="ab-stat">
+              <div class="ab-num">2019</div>
+              <div class="ab-label">Year Founded</div>
+            </div>
+            <div class="ab-stat">
+              <div class="ab-num">18</div>
+              <div class="ab-label">Districts Covered</div>
+            </div>
+            <div class="ab-stat">
+              <div class="ab-num">6</div>
+              <div class="ab-label">Drone Fleet Size</div>
+            </div>
+            <div class="ab-stat">
+              <div class="ab-num">24h</div>
+              <div class="ab-label">Response Time</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="contact-section" id="contact-section">
+        <div class="section-eyebrow">Get in Touch</div>
+        <h2 class="section-title">Contact Us</h2>
+        <p class="contact-intro">Our team is available six days a week. Reach out via your preferred channel and we'll
+          respond within 24 hours.</p>
+
+        <div class="contact-grid">
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M3 5h18v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5z" stroke="currentColor" stroke-width="1.2" />
+                <path d="M3 5l9 8 9-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="contact-method">Email</div>
+            <div class="contact-detail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                data-cfemail="741d1a121b34071512071c1d1f151a5a041f">[email&#160;protected]</a></div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"
+                  stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="contact-method">Phone / WhatsApp</div>
+            <div class="contact-detail">+92 300 SAFSHIKAN</div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C8.1 2 5 5.1 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.9-3.1-7-7-7z" stroke="currentColor"
+                  stroke-width="1.2" />
+                <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.2" />
+              </svg>
+            </div>
+            <div class="contact-method">Head Office</div>
+            <div class="contact-detail">Lahore, Punjab, Pakistan</div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2" />
+                <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="contact-method">Working Hours</div>
+            <div class="contact-detail">Mon – Sat, 8am – 6pm</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <div class="footer-brand">SAFSHIKAN</div>
+          <div class="footer-copy">© 2025 Safshikan Agri Tech · Punjab, Pakistan · All rights reserved</div>
+          <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     PAGE: ORDER
+══════════════════════════════════════════ -->
+  <div id="page-order" class="page">
+    <main class="order-main">
+
+      <!-- Back button -->
+      <div class="order-top-bar">
+        <button class="back-btn" onclick="showPage('home')">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          Back to Home
+        </button>
+        <div class="order-breadcrumb">Services / Order Form</div>
+      </div>
+
+      <div class="order-layout">
+
+        <!-- Left: Info Panel -->
+        <div class="order-info">
+          <div class="oi-badge">Service Request</div>
+          <h2 class="oi-title">Request a<br>Drone Service</h2>
+          <p class="oi-desc">Complete the form and our team will prepare a tailored quote and schedule for your farm
+            within 24 hours.</p>
+
+          <div class="oi-steps">
+            <div class="oi-step active" id="step1-indicator">
+              <div class="step-num">1</div>
+              <div class="step-info">
+                <div class="step-title">Select Service</div>
+                <div class="step-sub">Choose the service you require</div>
+              </div>
+            </div>
+            <div class="oi-step" id="step2-indicator">
+              <div class="step-num">2</div>
+              <div class="step-info">
+                <div class="step-title">Your Details</div>
+                <div class="step-sub">Name, location, and farm info</div>
+              </div>
+            </div>
+            <div class="oi-step" id="step3-indicator">
+              <div class="step-num">3</div>
+              <div class="step-info">
+                <div class="step-title">Confirmation</div>
+                <div class="step-sub">We'll contact you shortly</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="oi-assurance">
+            <div class="assurance-item">
+              <span>✦</span> Secure & encrypted submission
+            </div>
+            <div class="assurance-item">
+              <span>✦</span> Response within 24 hours
+            </div>
+            <div class="assurance-item">
+              <span>✦</span> No commitment required
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Form Panel -->
+        <div class="order-form-panel">
+
+          <div class="form-header">
+            <div class="form-header-title">Service Order Form</div>
+            <div class="form-header-lock">
+              <svg viewBox="0 0 14 14" fill="none">
+                <rect x="2" y="6" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1" />
+                <path d="M4.5 6V4.5a2.5 2.5 0 015 0V6" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+              </svg>
+              Secure
+            </div>
+          </div>
+
+          <div class="form-body">
+
+            <!-- Service Selection -->
+            <div class="form-section-label">Select a Service</div>
+            <div class="svc-grid">
+
+              <button class="svc-tile sel" id="svc-spray" onclick="selectSvc(this,'spray')">
+                <div class="svc-tile-top">
+                  <span class="svc-emoji">💧</span>
+                  <span class="svc-check">✓</span>
+                </div>
+                <div class="svc-tile-name">Aerial Spraying</div>
+                <div class="svc-tile-desc">Pesticide &amp; fertiliser application</div>
+              </button>
+
+              <button class="svc-tile" id="svc-mapping" onclick="selectSvc(this,'mapping')">
+                <div class="svc-tile-top">
+                  <span class="svc-emoji">🗺️</span>
+                  <span class="svc-check">✓</span>
+                </div>
+                <div class="svc-tile-name">Land Mapping</div>
+                <div class="svc-tile-desc">Topographic &amp; boundary surveys</div>
+              </button>
+
+              <button class="svc-tile" id="svc-report" onclick="selectSvc(this,'report')">
+                <div class="svc-tile-top">
+                  <span class="svc-emoji">📊</span>
+                  <span class="svc-check">✓</span>
+                </div>
+                <div class="svc-tile-name">Crop Health Report</div>
+                <div class="svc-tile-desc">NDVI analysis &amp; yield forecast</div>
+              </button>
+
+              <button class="svc-tile" id="svc-help" onclick="selectSvc(this,'help')">
+                <div class="svc-tile-top">
+                  <span class="svc-emoji">🎧</span>
+                  <span class="svc-check">✓</span>
+                </div>
+                <div class="svc-tile-name">Consultation</div>
+                <div class="svc-tile-desc">Expert advisory &amp; onboarding</div>
+              </button>
+
+            </div>
+
+            <input type="hidden" id="selectedService" value="spray">
+
+            <div class="form-divider"></div>
+            <div class="form-section-label">Farm &amp; Contact Details</div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Full Name</label>
+                <input type="text" id="fname" placeholder="e.g. Muhammad Ali Khan">
+              </div>
+              <div class="form-field">
+                <label>Phone / WhatsApp</label>
+                <input type="tel" id="phone" placeholder="+92 300 0000000">
+              </div>
+              <div class="form-field">
+                <label>District / Tehsil</label>
+                <input type="text" id="location" placeholder="e.g. Sheikhupura, Punjab">
+              </div>
+              <div class="form-field">
+                <label>Land Area (Acres)</label>
+                <input type="number" id="acres" min="1" placeholder="e.g. 25">
+              </div>
+              <div class="form-field">
+                <label>Crop Type</label>
+                <select id="crop">
+                  <option value="">— Select Crop —</option>
+                  <option>🌾 Wheat (گندم)</option>
+                  <option>🍚 Rice (چاول)</option>
+                  <option>🌿 Cotton (کپاس)</option>
+                  <option>🌽 Sugarcane (گنا)</option>
+                  <option>🌽 Maize (مکئی)</option>
+                  <option>🥬 Vegetables (سبزیاں)</option>
+                  <option>🍎 Fruits (پھل)</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Preferred Date</label>
+                <input type="date" id="date">
+              </div>
+              <div class="form-field span2">
+                <label>Additional Notes <span class="optional">(Optional)</span></label>
+                <textarea id="notes"
+                  placeholder="Field conditions, specific requirements, or any other concerns…"></textarea>
+              </div>
+            </div>
+
+            <button class="submit-btn" onclick="submitOrder()">
+              Submit Service Request
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+
+            <div class="form-note">
+              By submitting, you agree to be contacted by our team. We respond within 24 hours.
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon">✓</span>
+    Request
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
