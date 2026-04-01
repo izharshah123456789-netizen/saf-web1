@@ -187,54 +187,56 @@ function initHeroVideo() {
 }
 
 /* ══════════════════════════════════════════
-   INTRO — show "SAFSHIKAN" splash, then reveal site.
-   Video loading is intentionally deferred until AFTER
-   the intro dismisses so zero video bytes are fetched
-   during the splash screen (keeps first paint fast).
+   INTRO + REVEAL
+   The intro screen fades out, then JS adds .reveal
+   to header / hero-content / hero-metrics so CSS
+   transitions (not delayed animations) show them.
+   Bulletproof on iOS Safari and all Android browsers.
 ══════════════════════════════════════════ */
-/* ── Ensure animated elements are visible after delays (mobile safety) ─ */
-document.addEventListener('DOMContentLoaded', function () {
-  /* After all CSS animations finish (longest delay ~3.1s + 0.8s duration = 3.9s),
-     force-set opacity so mobile browsers that dropped the animation still show content */
+
+function revealPage() {
+  var els = [
+    document.getElementById('site-header'),
+    document.querySelector('.hero-content'),
+    document.querySelector('.hero-metrics')
+  ];
+  els.forEach(function (el, i) {
+    if (!el) return;
+    setTimeout(function () { el.classList.add('reveal'); }, i * 100);
+  });
+  /* Hard safety: force visible after 1.2s regardless */
   setTimeout(function () {
-    var animated = [
-      document.getElementById('site-header'),
-      document.querySelector('.hero-content'),
-      document.querySelector('.hero-metrics')
-    ];
-    animated.forEach(function (el) {
-      if (el) {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-        el.style.animation = 'none'; /* stop any still-running anim */
-      }
+    els.forEach(function (el) {
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
     });
-  }, 4200); /* fires after all animations are done */
-});
+  }, 1200);
+}
+
 function dismissIntro() {
   var intro = document.getElementById('intro-screen');
   if (!intro || intro.classList.contains('fade-out')) return;
   intro.classList.add('fade-out');
-  /* Remove from layout after animation so it can't block touch events */
   setTimeout(function () {
     intro.style.display = 'none';
     intro.style.pointerEvents = 'none';
+    revealPage();
     initBgVideo();
     initHeroVideo();
-  }, 1300); /* matches the 1.2s CSS animation + small buffer */
+  }, 1300);
 }
 
-/* Dismiss after the splash has been visible for ~2.0 s (animation + hold) */
+/* Primary: fire 2s after DOM ready */
 document.addEventListener('DOMContentLoaded', function () {
   setTimeout(dismissIntro, 2000);
 });
 
-/* Hard safety net: if DOMContentLoaded already fired (e.g. script is deferred)
-   or something stalls, force-dismiss after 4 s from script parse time */
+/* Safety net: force after 4s from script parse */
 setTimeout(function () {
   var intro = document.getElementById('intro-screen');
   if (intro && !intro.classList.contains('fade-out')) {
     dismissIntro();
+  } else {
+    revealPage();
   }
 }, 4000);
 
