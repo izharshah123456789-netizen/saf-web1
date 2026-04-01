@@ -276,7 +276,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   opacity: 0;
-  animation: headerSlide 0.7s var(--ease) 2.5s forwards;
+  animation: headerSlide 0.7s var(--ease) 2.5s both;
 }
 
 @keyframes headerSlide {
@@ -622,7 +622,7 @@ body {
 .hero-content {
   max-width: 680px;
   opacity: 0;
-  animation: contentReveal 0.8s var(--ease-out) 2.8s forwards;
+  animation: contentReveal 0.8s var(--ease-out) 2.8s both;
 }
 
 @keyframes contentReveal {
@@ -745,7 +745,7 @@ body {
   border-radius: var(--r-lg);
   overflow: hidden;
   opacity: 0;
-  animation: contentReveal 0.8s var(--ease-out) 3.1s forwards;
+  animation: contentReveal 0.8s var(--ease-out) 3.1s both;
 }
 
 .metric-card {

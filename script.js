@@ -192,16 +192,49 @@ function initHeroVideo() {
    the intro dismisses so zero video bytes are fetched
    during the splash screen (keeps first paint fast).
 ══════════════════════════════════════════ */
-/* SAFETY FALLBACK for mobile: Force hide intro if something goes wrong */
+/* ── Ensure animated elements are visible after delays (mobile safety) ─ */
+document.addEventListener('DOMContentLoaded', function () {
+  /* After all CSS animations finish (longest delay ~3.1s + 0.8s duration = 3.9s),
+     force-set opacity so mobile browsers that dropped the animation still show content */
+  setTimeout(function () {
+    var animated = [
+      document.getElementById('site-header'),
+      document.querySelector('.hero-content'),
+      document.querySelector('.hero-metrics')
+    ];
+    animated.forEach(function (el) {
+      if (el) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.animation = 'none'; /* stop any still-running anim */
+      }
+    });
+  }, 4200); /* fires after all animations are done */
+});
+function dismissIntro() {
+  var intro = document.getElementById('intro-screen');
+  if (!intro || intro.classList.contains('fade-out')) return;
+  intro.classList.add('fade-out');
+  /* Remove from layout after animation so it can't block touch events */
+  setTimeout(function () {
+    intro.style.display = 'none';
+    intro.style.pointerEvents = 'none';
+    initBgVideo();
+    initHeroVideo();
+  }, 1300); /* matches the 1.2s CSS animation + small buffer */
+}
+
+/* Dismiss after the splash has been visible for ~2.0 s (animation + hold) */
+document.addEventListener('DOMContentLoaded', function () {
+  setTimeout(dismissIntro, 2000);
+});
+
+/* Hard safety net: if DOMContentLoaded already fired (e.g. script is deferred)
+   or something stalls, force-dismiss after 4 s from script parse time */
 setTimeout(function () {
   var intro = document.getElementById('intro-screen');
-  if (intro && intro.style.display !== 'none') {
-    intro.classList.add('fade-out');
-    setTimeout(function () {
-      intro.style.display = 'none';
-      if (typeof initBgVideo === 'function') initBgVideo();
-      if (typeof initHeroVideo === 'function') initHeroVideo();
-    }, 200);
+  if (intro && !intro.classList.contains('fade-out')) {
+    dismissIntro();
   }
 }, 4000);
 
