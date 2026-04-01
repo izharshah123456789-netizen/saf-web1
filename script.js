@@ -192,17 +192,18 @@ function initHeroVideo() {
    the intro dismisses so zero video bytes are fetched
    during the splash screen (keeps first paint fast).
 ══════════════════════════════════════════ */
+/* SAFETY FALLBACK for mobile: Force hide intro if something goes wrong */
 setTimeout(function () {
   var intro = document.getElementById('intro-screen');
-  if (!intro) return;
-  intro.classList.add('fade-out');
-  setTimeout(function () {
-    intro.style.display = 'none';
-    /* Start video loading now that the UI is fully visible */
-    initBgVideo();
-    initHeroVideo();
-  }, 1200);
-}, 2600);
+  if (intro && intro.style.display !== 'none') {
+    intro.classList.add('fade-out');
+    setTimeout(function () {
+      intro.style.display = 'none';
+      if (typeof initBgVideo === 'function') initBgVideo();
+      if (typeof initHeroVideo === 'function') initHeroVideo();
+    }, 200);
+  }
+}, 4000);
 
 /* ══════════════════════════════════════════
    MOBILE MENU
