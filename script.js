@@ -23,8 +23,8 @@ function isSlowConnection() {
   var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (!conn) return false;
   return conn.saveData === true ||
-         conn.effectiveType === '2g' ||
-         conn.effectiveType === 'slow-2g';
+    conn.effectiveType === '2g' ||
+    conn.effectiveType === 'slow-2g';
 }
 
 /**
@@ -91,9 +91,8 @@ function initBgVideo() {
   /* Skip on reduced-motion or slow connection — poster already shows */
   if (prefersReducedMotion() || isSlowConnection()) return;
 
-  /* On very small screens, skip the bg video entirely to save data.
-     The poster image set as the video's poster attr already looks great. */
-  if (window.matchMedia('(max-width: 480px)').matches) return;
+  // Allow video on mobile but use lower quality
+  if (isSlowConnection()) return;
 
   function loadBgVideo() {
     activateVideo(bgVideo);
@@ -119,7 +118,7 @@ function initBgVideo() {
     if (document.hidden) {
       bgVideo.pause();
     } else {
-      bgVideo.play().catch(function () {});
+      bgVideo.play().catch(function () { });
     }
   });
 }
@@ -156,7 +155,7 @@ function initHeroVideo() {
             }, { once: true });
           } else {
             /* Back in viewport — resume without re-fetching */
-            heroVideo.play().catch(function () {});
+            heroVideo.play().catch(function () { });
           }
         } else {
           /* Left viewport — pause to free decoding thread */
@@ -182,7 +181,7 @@ function initHeroVideo() {
     } else {
       var r = heroVideo.getBoundingClientRect();
       var inView = r.top < window.innerHeight && r.bottom > 0;
-      if (inView) heroVideo.play().catch(function () {});
+      if (inView) heroVideo.play().catch(function () { });
     }
   });
 }
@@ -239,7 +238,7 @@ function closeMobileMenu() {
 /* Close menu when clicking outside */
 document.addEventListener('click', function (e) {
   var header = document.getElementById('site-header');
-  var nav    = document.getElementById('mobile-nav');
+  var nav = document.getElementById('mobile-nav');
   if (!nav || !nav.classList.contains('open')) return;
   if (header && !header.contains(e.target)) {
     closeMobileMenu();
@@ -368,7 +367,7 @@ function showAlert(msg) {
    CONFETTI
 ══════════════════════════════════════════ */
 function launchConfetti() {
-  var cols = ['#9CAF88','#5C7A52','#3D5A35','#B8922A','#D4AE50','#E0E8D8'];
+  var cols = ['#9CAF88', '#5C7A52', '#3D5A35', '#B8922A', '#D4AE50', '#E0E8D8'];
   for (var i = 0; i < 55; i++) {
     var c = document.createElement('div');
     var sz = 5 + Math.random() * 7;

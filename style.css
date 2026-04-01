@@ -603,14 +603,20 @@ body {
 .hero-section {
   min-height: calc(100dvh - var(--header-h));
   min-height: calc(100vh - var(--header-h));
-  /* fallback */
+
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 40px 60px;
+  padding: 40px 20px 60px;
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 48px;
+
+  justify-content: flex-start;
+  /* 🔥 FIX */
+  align-items: flex-start;
+  /* 🔥 FIX */
+
+  gap: 32px;
 }
 
 .hero-content {
