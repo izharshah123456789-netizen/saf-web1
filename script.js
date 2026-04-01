@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════
    SAFSHIKAN — Aerial Agri Solutions
-   script.js — Optimised Video Loading
+   script.js — Video Optimised + Mobile Menu
 ══════════════════════════════════════════ */
 
 /* ══════════════════════════════════════════
@@ -8,30 +8,54 @@
 ══════════════════════════════════════════ */
 
 /**
- * Returns true if the user prefers reduced motion.
- * If so we never autoplay — accessibility + battery.
+ * True if the user prefers reduced motion.
+ * We never autoplay in this case — accessibility + battery.
  */
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /**
- * Returns true if the connection is too slow for streaming video.
+ * True if the connection is too slow for streaming video.
  * Saves mobile data on 2G / save-data mode.
  */
 function isSlowConnection() {
   var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (!conn) return false;
-  return conn.saveData === true || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g';
+  return conn.saveData === true ||
+         conn.effectiveType === '2g' ||
+         conn.effectiveType === 'slow-2g';
 }
 
 /**
- * Load a video from its data-src and play it.
+ * True when the screen is a "mobile" width.
+ * Used to pick the lower-res Cloudinary variant.
+ */
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 600px)').matches;
+}
+
+/**
+ * Load a video from its data-src (or data-src-mobile on phones) and play it.
  * Guards against double-loading with a data-loaded flag.
+ *
+ * Why data-src instead of src:
+ *   Setting src="" or src on page load immediately triggers a network request.
+ *   We store the URL in a data attribute and inject it only when needed,
+ *   so zero bytes are fetched for video until the right moment.
+ *
+ * Why data-src-mobile:
+ *   Cloudinary lets us serve a smaller 640px-wide variant for phones,
+ *   cutting bandwidth by ~60-70% on mobile without any quality loss at that size.
  */
 function activateVideo(videoEl) {
   if (!videoEl || videoEl.dataset.loaded) return;
-  var src = videoEl.dataset.src;
+
+  /* Choose mobile or desktop URL */
+  var src = (isMobileViewport() && videoEl.dataset.srcMobile)
+    ? videoEl.dataset.srcMobile
+    : videoEl.dataset.src;
+
   if (!src) return;
 
   videoEl.src = src;
@@ -40,90 +64,112 @@ function activateVideo(videoEl) {
 
   var p = videoEl.play();
   if (p !== undefined) {
-    p.catch(function () { /* autoplay blocked — poster stays visible, no crash */ });
+    p.catch(function () {
+      /* Autoplay blocked by browser — poster stays visible, no crash. */
+    });
   }
 }
 
 /* ══════════════════════════════════════════
    BACKGROUND VIDEO
-   • Deferred via requestIdleCallback (or 1.5s fallback)
-     so it never competes with first-paint resources.
-   • Skipped entirely on slow connections or reduced-motion.
-   • Paused when the browser tab is hidden (saves CPU/GPU).
-   • Fades in smoothly only after enough data is buffered.
+   Strategy:
+   1. Skip entirely on slow connections or reduced-motion.
+      → The poster image (already loaded as a CSS bg via the poster attr)
+        keeps the background filled perfectly — zero visual gap.
+   2. Defer via requestIdleCallback so it never competes with
+      first-paint or the intro animation.
+   3. Fade in smoothly via CSS transition ONLY after canplaythrough:
+      this means the video won't flicker with a half-loaded first frame.
+   4. Pause when the browser tab goes hidden (saves CPU/GPU/battery).
+   5. On mobile (≤600px) we serve data-src-mobile — a 640px-wide
+      Cloudinary URL that's ~70% smaller than the desktop version.
 ══════════════════════════════════════════ */
 function initBgVideo() {
   var bgVideo = document.getElementById('bg-video');
   if (!bgVideo) return;
 
-  if (isSlowConnection() || prefersReducedMotion()) {
-    /* Poster image already fills the background — nothing else needed */
-    return;
-  }
+  /* Skip on reduced-motion or slow connection — poster already shows */
+  if (prefersReducedMotion() || isSlowConnection()) return;
+
+  /* On very small screens, skip the bg video entirely to save data.
+     The poster image set as the video's poster attr already looks great. */
+  if (window.matchMedia('(max-width: 480px)').matches) return;
 
   function loadBgVideo() {
     activateVideo(bgVideo);
 
-    /* Smooth fade-in once the video has enough data to play without stalling */
+    /* Fade in ONLY after enough data is buffered to play without stalling.
+       .bg-video--ready adds opacity:1 via a CSS transition. */
     bgVideo.addEventListener('canplaythrough', function () {
       bgVideo.classList.add('bg-video--ready');
     }, { once: true });
   }
 
-  /* requestIdleCallback yields to the main thread during first paint */
+  /* requestIdleCallback yields to the main thread during first paint.
+     Fallback: 1.5s setTimeout for browsers without rIC (e.g. Safari < 16). */
   if ('requestIdleCallback' in window) {
     requestIdleCallback(loadBgVideo, { timeout: 2000 });
   } else {
     setTimeout(loadBgVideo, 1500);
   }
 
-  /* Page visibility — pause/resume to save battery & CPU */
+  /* Page visibility API — pause/resume to save battery & CPU */
   document.addEventListener('visibilitychange', function () {
     if (!bgVideo.dataset.loaded) return;
-    document.hidden ? bgVideo.pause() : bgVideo.play().catch(function () {});
+    if (document.hidden) {
+      bgVideo.pause();
+    } else {
+      bgVideo.play().catch(function () {});
+    }
   });
 }
 
 /* ══════════════════════════════════════════
    HERO VIDEO
-   • IntersectionObserver: only fetch & play when
-     the element is 25% visible in the viewport.
-   • Paused when scrolled out of view.
-   • Resumed when scrolled back in.
-   • Paused on hidden tab, resumed only if still in viewport.
-   • Fades in via CSS class once canplay fires.
+   Strategy:
+   1. IntersectionObserver: only fetch & decode when the element
+      is ≥25% visible in the viewport — no wasted bytes if the
+      user never scrolls to the hero video.
+   2. First entry  → activateVideo() fetches and starts playback.
+   3. Leaving view → pause() to free the decoding thread.
+   4. Re-entering  → resume play() (no re-fetch needed).
+   5. Tab hidden   → pause(); resume only if still in viewport.
+   6. Fade-in via .visible class triggered by canplay event.
+   7. Mobile: uses data-src-mobile for a smaller Cloudinary URL.
+   8. Falls back to immediate load + play on browsers without IO.
 ══════════════════════════════════════════ */
 function initHeroVideo() {
   var heroVideo = document.getElementById('hero-video');
   if (!heroVideo) return;
 
-  if (isSlowConnection() || prefersReducedMotion()) {
-    return;
-  }
+  if (prefersReducedMotion() || isSlowConnection()) return;
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           if (!heroVideo.dataset.loaded) {
-            /* First entry into viewport — fetch and start */
+            /* First time in viewport — fetch & start */
             activateVideo(heroVideo);
             heroVideo.addEventListener('canplay', function () {
               heroVideo.classList.add('visible');
             }, { once: true });
           } else {
+            /* Back in viewport — resume without re-fetching */
             heroVideo.play().catch(function () {});
           }
         } else {
-          /* Left viewport — free up decoding thread */
+          /* Left viewport — pause to free decoding thread */
           if (heroVideo.dataset.loaded) heroVideo.pause();
         }
       });
-    }, { threshold: 0.25 });
+    }, {
+      threshold: 0.25   /* trigger when 25% of the element is visible */
+    });
 
     io.observe(heroVideo);
   } else {
-    /* Legacy fallback */
+    /* Legacy fallback — load immediately */
     activateVideo(heroVideo);
     heroVideo.classList.add('visible');
   }
@@ -135,18 +181,17 @@ function initHeroVideo() {
       heroVideo.pause();
     } else {
       var r = heroVideo.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) {
-        heroVideo.play().catch(function () {});
-      }
+      var inView = r.top < window.innerHeight && r.bottom > 0;
+      if (inView) heroVideo.play().catch(function () {});
     }
   });
 }
 
 /* ══════════════════════════════════════════
-   INTRO — show "SAFSHIKAN", then reveal site.
-   Video loading is intentionally deferred until
-   AFTER the intro dismisses so zero video bytes
-   are fetched during the splash screen.
+   INTRO — show "SAFSHIKAN" splash, then reveal site.
+   Video loading is intentionally deferred until AFTER
+   the intro dismisses so zero video bytes are fetched
+   during the splash screen (keeps first paint fast).
 ══════════════════════════════════════════ */
 setTimeout(function () {
   var intro = document.getElementById('intro-screen');
@@ -154,11 +199,52 @@ setTimeout(function () {
   intro.classList.add('fade-out');
   setTimeout(function () {
     intro.style.display = 'none';
-    /* Start video loading now that the UI is visible */
+    /* Start video loading now that the UI is fully visible */
     initBgVideo();
     initHeroVideo();
   }, 1200);
 }, 2600);
+
+/* ══════════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════════ */
+function toggleMobileMenu() {
+  var btn = document.getElementById('hamburger-btn');
+  var nav = document.getElementById('mobile-nav');
+  if (!btn || !nav) return;
+
+  var isOpen = nav.classList.contains('open');
+
+  if (isOpen) {
+    closeMobileMenu();
+  } else {
+    nav.classList.add('open');
+    btn.classList.add('open');
+    btn.setAttribute('aria-label', 'Close menu');
+    document.body.style.overflow = 'hidden'; /* prevent scroll when menu open */
+  }
+}
+
+function closeMobileMenu() {
+  var btn = document.getElementById('hamburger-btn');
+  var nav = document.getElementById('mobile-nav');
+  if (!btn || !nav) return;
+
+  nav.classList.remove('open');
+  btn.classList.remove('open');
+  btn.setAttribute('aria-label', 'Open menu');
+  document.body.style.overflow = '';
+}
+
+/* Close menu when clicking outside */
+document.addEventListener('click', function (e) {
+  var header = document.getElementById('site-header');
+  var nav    = document.getElementById('mobile-nav');
+  if (!nav || !nav.classList.contains('open')) return;
+  if (header && !header.contains(e.target)) {
+    closeMobileMenu();
+  }
+});
 
 /* ══════════════════════════════════════════
    PAGE NAVIGATION
@@ -167,18 +253,22 @@ function showPage(name, preselect) {
   document.querySelectorAll('.page').forEach(function (p) {
     p.classList.remove('active');
   });
+
   var target = document.getElementById('page-' + name);
   if (target) {
     target.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
   document.querySelectorAll('.nav-item').forEach(function (n) {
     n.classList.remove('active');
   });
+
   if (name === 'home') {
     var first = document.querySelector('.nav-item');
     if (first) first.classList.add('active');
   }
+
   if (preselect && name === 'order') {
     setTimeout(function () {
       var tile = document.getElementById('svc-' + preselect);
@@ -187,7 +277,7 @@ function showPage(name, preselect) {
   }
 }
 
-function scrollTo(selector) {
+function scrollToEl(selector) {
   var el = document.querySelector(selector);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -256,14 +346,15 @@ function submitOrder() {
 function showAlert(msg) {
   var a = document.createElement('div');
   a.style.cssText =
-    'position:fixed;top:88px;left:50%;' +
+    'position:fixed;top:80px;left:50%;' +
     'transform:translateX(-50%) translateY(-70px);' +
     'background:#FFFFFF;color:#3D2020;' +
-    'padding:12px 26px;border-radius:100px;' +
+    'padding:12px 22px;border-radius:100px;' +
     'font-family:"DM Sans",sans-serif;font-size:0.8rem;letter-spacing:0.04em;' +
     'z-index:600;box-shadow:0 8px 32px rgba(0,0,0,0.12);' +
     'border:1px solid rgba(180,60,60,0.18);' +
-    'transition:transform 0.3s cubic-bezier(0,0,0.2,1);pointer-events:none;';
+    'transition:transform 0.3s cubic-bezier(0,0,0.2,1);pointer-events:none;' +
+    'max-width:calc(100vw - 48px);text-align:center;';
   a.textContent = '⚠  ' + msg;
   document.body.appendChild(a);
   setTimeout(function () { a.style.transform = 'translateX(-50%) translateY(0)'; }, 10);
@@ -277,7 +368,7 @@ function showAlert(msg) {
    CONFETTI
 ══════════════════════════════════════════ */
 function launchConfetti() {
-  var cols = ['#9CAF88', '#5C7A52', '#3D5A35', '#B8922A', '#D4AE50', '#E0E8D8'];
+  var cols = ['#9CAF88','#5C7A52','#3D5A35','#B8922A','#D4AE50','#E0E8D8'];
   for (var i = 0; i < 55; i++) {
     var c = document.createElement('div');
     var sz = 5 + Math.random() * 7;

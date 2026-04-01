@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>SAFSHIKAN — Aerial Agri Solutions</title>
   <!-- Performance: pre-connect to video CDN so TLS handshake is ready -->
   <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -31,7 +31,15 @@
      BACKGROUND
 ══════════════════════════════════════════ -->
   <div class="bg-layer">
-    <!-- BG VIDEO: src injected by JS after page load; poster keeps background filled instantly -->
+    <!--
+      BG VIDEO — fully optimised:
+      • src injected by JS (never fetched before page loads)
+      • poster fills background instantly — zero layout shift
+      • playsinline required for iOS autoplay
+      • muted required for autoplay policy on all browsers
+      • preload="none" — zero network bytes until JS injects src
+      • On mobile/slow connections JS skips loading entirely
+    -->
     <video
       id="bg-video"
       class="bg-video"
@@ -41,6 +49,7 @@
       preload="none"
       poster="https://res.cloudinary.com/dvulzqrc5/video/upload/so_0/v1775049408/YTDown.com_YouTube_My-most-beautiful-drone-shot-Cinematic-F_Media_278IRQ6HSi4_002_720p_iegq9m.jpg"
       data-src="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto/v1775049408/YTDown.com_YouTube_My-most-beautiful-drone-shot-Cinematic-F_Media_278IRQ6HSi4_002_720p_iegq9m.mp4"
+      data-src-mobile="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto,w_640/v1775049408/YTDown.com_YouTube_My-most-beautiful-drone-shot-Cinematic-F_Media_278IRQ6HSi4_002_720p_iegq9m.mp4"
     >
     </video>
 
@@ -74,11 +83,11 @@
         </div>
       </div>
 
-      <nav class="main-nav">
-        <a class="nav-item active" onclick="showPage('home')">Home</a>
-        <a class="nav-item" onclick="showPage('order')">Services</a>
-        <a class="nav-item" href="#about-section">About</a>
-        <a class="nav-item" href="#contact-section">Contact</a>
+      <nav class="main-nav" id="main-nav">
+        <a class="nav-item active" onclick="showPage('home');closeMobileMenu()">Home</a>
+        <a class="nav-item" onclick="showPage('order');closeMobileMenu()">Services</a>
+        <a class="nav-item" href="#about-section" onclick="closeMobileMenu()">About</a>
+        <a class="nav-item" href="#contact-section" onclick="closeMobileMenu()">Contact</a>
       </nav>
 
       <div class="header-cta">
@@ -86,6 +95,22 @@
         <span class="status-text">Fleet Active</span>
         <button class="btn-primary" onclick="showPage('order')">Request Service</button>
       </div>
+
+      <!-- Hamburger button — mobile only -->
+      <button class="hamburger" id="hamburger-btn" aria-label="Open menu" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile nav drawer -->
+    <div class="mobile-nav" id="mobile-nav">
+      <a class="mobile-nav-item" onclick="showPage('home');closeMobileMenu()">Home</a>
+      <a class="mobile-nav-item" onclick="showPage('order');closeMobileMenu()">Services</a>
+      <a class="mobile-nav-item" href="#about-section" onclick="closeMobileMenu()">About</a>
+      <a class="mobile-nav-item" href="#contact-section" onclick="closeMobileMenu()">Contact</a>
+      <button class="btn-primary mobile-nav-cta" onclick="showPage('order');closeMobileMenu()">Request Service</button>
     </div>
   </header>
 
@@ -117,28 +142,40 @@
             yield with minimal intervention.
           </p>
 
-          <!-- INLINE VIDEO: lazy-loaded via IntersectionObserver -->
+          <!--
+            HERO VIDEO — fully optimised:
+            • preload="none" — zero bytes fetched on page load
+            • poster shown immediately, no black flash
+            • data-src injected by JS only when in viewport (IntersectionObserver)
+            • data-src-mobile — lower-res Cloudinary URL for phones
+            • playsinline — iOS requires this for inline autoplay
+            • muted — required for autoplay policy
+            • JS fades it in via .visible class once canplay fires
+          -->
           <div class="hero-media">
-            <video
-              id="hero-video"
-              class="hero-video-el"
-              muted
-              loop
-              playsinline
-              preload="none"
-              poster="https://res.cloudinary.com/dvulzqrc5/video/upload/so_0/v1775049432/0401_1_vyvme9.jpg"
-              data-src="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto/v1775049432/0401_1_vyvme9.mp4"
-            >
-            </video>
+            <div class="hero-video-wrapper">
+              <video
+                id="hero-video"
+                class="hero-video-el"
+                muted
+                loop
+                playsinline
+                preload="none"
+                poster="https://res.cloudinary.com/dvulzqrc5/video/upload/so_0/v1775049432/0401_1_vyvme9.jpg"
+                data-src="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto/v1775049432/0401_1_vyvme9.mp4"
+                data-src-mobile="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto,w_640/v1775049432/0401_1_vyvme9.mp4"
+              >
+              </video>
+            </div>
           </div>
 
           <div class="hero-actions">
             <button class="btn-primary large" onclick="showPage('order')">Order a Service</button>
-            <button class="btn-ghost large" onclick="scrollTo('#about-section')">Learn More</button>
+            <button class="btn-ghost large" onclick="scrollToEl('#about-section')">Learn More</button>
           </div>
         </div>
 
-        <!-- KEEP YOUR METRICS BELOW -->
+        <!-- METRICS BAR -->
         <div class="hero-metrics">
           <div class="metric-card">
             <div class="metric-num">247<span>+</span></div>
@@ -159,6 +196,7 @@
         </div>
 
       </section>
+
       <!-- Navigation Cards -->
       <section class="nav-cards" id="services-section">
         <div class="section-eyebrow">Our Services</div>
@@ -341,8 +379,7 @@
               </svg>
             </div>
             <div class="contact-method">Email</div>
-            <div class="contact-detail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                data-cfemail="741d1a121b34071512071c1d1f151a5a041f">[email&#160;protected]</a></div>
+            <div class="contact-detail">info@safshikan.com</div>
           </div>
           <div class="contact-card">
             <div class="contact-card-icon">
@@ -524,11 +561,11 @@
             <div class="form-grid">
               <div class="form-field">
                 <label>Full Name</label>
-                <input type="text" id="fname" placeholder="e.g. Muhammad Ali Khan">
+                <input type="text" id="fname" placeholder="e.g. Muhammad Ali Khan" autocomplete="name">
               </div>
               <div class="form-field">
                 <label>Phone / WhatsApp</label>
-                <input type="tel" id="phone" placeholder="+92 300 0000000">
+                <input type="tel" id="phone" placeholder="+92 300 0000000" autocomplete="tel">
               </div>
               <div class="form-field">
                 <label>District / Tehsil</label>
@@ -536,7 +573,7 @@
               </div>
               <div class="form-field">
                 <label>Land Area (Acres)</label>
-                <input type="number" id="acres" min="1" placeholder="e.g. 25">
+                <input type="number" id="acres" min="1" placeholder="e.g. 25" inputmode="numeric">
               </div>
               <div class="form-field">
                 <label>Crop Type</label>
@@ -587,7 +624,6 @@
     <span class="toast-icon">✓</span>
     Request submitted — we'll be in touch within 24 hours.
   </div>
-
 
   <script src="script.js"></script>
 </body>
