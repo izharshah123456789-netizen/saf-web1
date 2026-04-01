@@ -141,15 +141,30 @@ body {
 
 .bg-video {
   position: fixed;
-  /* 🔥 CHANGE THIS */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   object-fit: cover;
   z-index: -1;
-  /* 🔥 SEND IT BEHIND EVERYTHING */
+  /* Start invisible — JS fades it in after buffering */
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  /* Hint to the compositor to keep this on its own layer */
+  will-change: transform, opacity;
   animation: slowZoom 20s ease-in-out infinite alternate;
+}
+
+/* Faded in by JS once canplaythrough fires */
+.bg-video--ready {
+  opacity: 1;
+}
+
+/* Respect prefers-reduced-motion: freeze the zoom animation */
+@media (prefers-reduced-motion: reduce) {
+  .bg-video {
+    animation: none;
+  }
 }
 
 @keyframes slowZoom {
@@ -1623,5 +1638,49 @@ body {
 
   .svc-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════
+   HERO ROW / MEDIA — inline video layout
+══════════════════════════════════════════ */
+.hero-row {
+  display: block; /* single column */
+}
+
+/* INLINE VIDEO CONTAINER — below text, above buttons */
+.hero-media {
+  margin: 28px 0 32px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* COMPACT VIDEO BOX */
+.hero-video-el {
+  width: min(420px, 100%);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.32);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
+}
+
+/* when visible */
+.hero-video-el.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .hero-media {
+    justify-content: center;
+    margin: 22px 0 26px;
+  }
+  .hero-video-el {
+    width: 100%;
   }
 }

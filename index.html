@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAFSHIKAN — Aerial Agri Solutions</title>
+  <!-- Performance: pre-connect to video CDN so TLS handshake is ready -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <link rel="dns-prefetch" href="https://res.cloudinary.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"
     rel="stylesheet">
@@ -28,10 +31,17 @@
      BACKGROUND
 ══════════════════════════════════════════ -->
   <div class="bg-layer">
-    <video class="bg-video" autoplay muted loop playsinline preload="auto">
-      <source
-        src="https://res.cloudinary.com/dvulzqrc5/video/upload/v1774976555/FPV_Drone_Flight_through_Beautiful_Iceland_Canyon_1440p_reez3l.mp4"
-        type="video/mp4">
+    <!-- BG VIDEO: src injected by JS after page load; poster keeps background filled instantly -->
+    <video
+      id="bg-video"
+      class="bg-video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster="https://res.cloudinary.com/dvulzqrc5/video/upload/so_0/v1775049408/YTDown.com_YouTube_My-most-beautiful-drone-shot-Cinematic-F_Media_278IRQ6HSi4_002_720p_iegq9m.jpg"
+      data-src="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto/v1775049408/YTDown.com_YouTube_My-most-beautiful-drone-shot-Cinematic-F_Media_278IRQ6HSi4_002_720p_iegq9m.mp4"
+    >
     </video>
 
     <div class="bg-gradient"></div>
@@ -88,42 +98,44 @@
       <!-- Hero Section -->
       <section class="hero-section">
 
-        <!-- NEW ROW -->
-        <div class="hero-row">
-
-          <!-- LEFT: TEXT -->
-          <div class="hero-content">
-            <div class="hero-badge">
-              <span class="badge-dot"></span>
-              Precision Agriculture · Punjab, Pakistan
-            </div>
-
-            <h1 class="hero-title">
-              Advanced Drone<br>
-              <em>Solutions for</em><br>
-              Modern Farming
-            </h1>
-
-            <p class="hero-desc">
-              We deliver precision aerial spraying, high-resolution land mapping, and
-              data-driven crop intelligence — empowering Punjab's farmers to maximise
-              yield with minimal intervention.
-            </p>
-
-            <div class="hero-actions">
-              <button class="btn-primary large" onclick="showPage('order')">Order a Service</button>
-              <button class="btn-ghost large" onclick="scrollTo('#about-section')">Learn More</button>
-            </div>
+        <!-- HERO CONTENT (single column) -->
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Precision Agriculture · Punjab, Pakistan
           </div>
 
-          <!-- RIGHT: VIDEO -->
+          <h1 class="hero-title">
+            Advanced Drone<br>
+            <em>Solutions for</em><br>
+            Modern Farming
+          </h1>
+
+          <p class="hero-desc">
+            We deliver precision aerial spraying, high-resolution land mapping, and
+            data-driven crop intelligence — empowering Punjab's farmers to maximise
+            yield with minimal intervention.
+          </p>
+
+          <!-- INLINE VIDEO: lazy-loaded via IntersectionObserver -->
           <div class="hero-media">
-            <video autoplay muted loop playsinline>
-              <source src="https://res.cloudinary.com/dvulzqrc5/video/upload/v1774980498/0331_1_an6fgy.mp4"
-                type="video/mp4">
+            <video
+              id="hero-video"
+              class="hero-video-el"
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster="https://res.cloudinary.com/dvulzqrc5/video/upload/so_0/v1775049432/0401_1_vyvme9.jpg"
+              data-src="https://res.cloudinary.com/dvulzqrc5/video/upload/q_auto,vc_auto/v1775049432/0401_1_vyvme9.mp4"
+            >
             </video>
           </div>
 
+          <div class="hero-actions">
+            <button class="btn-primary large" onclick="showPage('order')">Order a Service</button>
+            <button class="btn-ghost large" onclick="scrollTo('#about-section')">Learn More</button>
+          </div>
         </div>
 
         <!-- KEEP YOUR METRICS BELOW -->
@@ -573,9 +585,9 @@
   <!-- Success Toast -->
   <div class="toast" id="toast">
     <span class="toast-icon">✓</span>
-    Request
-
+    Request submitted — we'll be in touch within 24 hours.
   </div>
+
 
   <script src="script.js"></script>
 </body>

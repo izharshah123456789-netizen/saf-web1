@@ -1,10 +1,152 @@
 /* ══════════════════════════════════════════
    SAFSHIKAN — Aerial Agri Solutions
-   script.js — Professional Redesign
+   script.js — Optimised Video Loading
 ══════════════════════════════════════════ */
 
 /* ══════════════════════════════════════════
-   INTRO — show "SAFSHIKAN" text, then reveal site
+   VIDEO OPTIMISATION UTILITIES
+══════════════════════════════════════════ */
+
+/**
+ * Returns true if the user prefers reduced motion.
+ * If so we never autoplay — accessibility + battery.
+ */
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/**
+ * Returns true if the connection is too slow for streaming video.
+ * Saves mobile data on 2G / save-data mode.
+ */
+function isSlowConnection() {
+  var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!conn) return false;
+  return conn.saveData === true || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g';
+}
+
+/**
+ * Load a video from its data-src and play it.
+ * Guards against double-loading with a data-loaded flag.
+ */
+function activateVideo(videoEl) {
+  if (!videoEl || videoEl.dataset.loaded) return;
+  var src = videoEl.dataset.src;
+  if (!src) return;
+
+  videoEl.src = src;
+  videoEl.load();
+  videoEl.dataset.loaded = 'true';
+
+  var p = videoEl.play();
+  if (p !== undefined) {
+    p.catch(function () { /* autoplay blocked — poster stays visible, no crash */ });
+  }
+}
+
+/* ══════════════════════════════════════════
+   BACKGROUND VIDEO
+   • Deferred via requestIdleCallback (or 1.5s fallback)
+     so it never competes with first-paint resources.
+   • Skipped entirely on slow connections or reduced-motion.
+   • Paused when the browser tab is hidden (saves CPU/GPU).
+   • Fades in smoothly only after enough data is buffered.
+══════════════════════════════════════════ */
+function initBgVideo() {
+  var bgVideo = document.getElementById('bg-video');
+  if (!bgVideo) return;
+
+  if (isSlowConnection() || prefersReducedMotion()) {
+    /* Poster image already fills the background — nothing else needed */
+    return;
+  }
+
+  function loadBgVideo() {
+    activateVideo(bgVideo);
+
+    /* Smooth fade-in once the video has enough data to play without stalling */
+    bgVideo.addEventListener('canplaythrough', function () {
+      bgVideo.classList.add('bg-video--ready');
+    }, { once: true });
+  }
+
+  /* requestIdleCallback yields to the main thread during first paint */
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadBgVideo, { timeout: 2000 });
+  } else {
+    setTimeout(loadBgVideo, 1500);
+  }
+
+  /* Page visibility — pause/resume to save battery & CPU */
+  document.addEventListener('visibilitychange', function () {
+    if (!bgVideo.dataset.loaded) return;
+    document.hidden ? bgVideo.pause() : bgVideo.play().catch(function () {});
+  });
+}
+
+/* ══════════════════════════════════════════
+   HERO VIDEO
+   • IntersectionObserver: only fetch & play when
+     the element is 25% visible in the viewport.
+   • Paused when scrolled out of view.
+   • Resumed when scrolled back in.
+   • Paused on hidden tab, resumed only if still in viewport.
+   • Fades in via CSS class once canplay fires.
+══════════════════════════════════════════ */
+function initHeroVideo() {
+  var heroVideo = document.getElementById('hero-video');
+  if (!heroVideo) return;
+
+  if (isSlowConnection() || prefersReducedMotion()) {
+    return;
+  }
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (!heroVideo.dataset.loaded) {
+            /* First entry into viewport — fetch and start */
+            activateVideo(heroVideo);
+            heroVideo.addEventListener('canplay', function () {
+              heroVideo.classList.add('visible');
+            }, { once: true });
+          } else {
+            heroVideo.play().catch(function () {});
+          }
+        } else {
+          /* Left viewport — free up decoding thread */
+          if (heroVideo.dataset.loaded) heroVideo.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+
+    io.observe(heroVideo);
+  } else {
+    /* Legacy fallback */
+    activateVideo(heroVideo);
+    heroVideo.classList.add('visible');
+  }
+
+  /* Tab visibility — only resume if the element is still in view */
+  document.addEventListener('visibilitychange', function () {
+    if (!heroVideo.dataset.loaded) return;
+    if (document.hidden) {
+      heroVideo.pause();
+    } else {
+      var r = heroVideo.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        heroVideo.play().catch(function () {});
+      }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   INTRO — show "SAFSHIKAN", then reveal site.
+   Video loading is intentionally deferred until
+   AFTER the intro dismisses so zero video bytes
+   are fetched during the splash screen.
 ══════════════════════════════════════════ */
 setTimeout(function () {
   var intro = document.getElementById('intro-screen');
@@ -12,6 +154,9 @@ setTimeout(function () {
   intro.classList.add('fade-out');
   setTimeout(function () {
     intro.style.display = 'none';
+    /* Start video loading now that the UI is visible */
+    initBgVideo();
+    initHeroVideo();
   }, 1200);
 }, 2600);
 
@@ -19,24 +164,21 @@ setTimeout(function () {
    PAGE NAVIGATION
 ══════════════════════════════════════════ */
 function showPage(name, preselect) {
-  // Hide all pages
   document.querySelectorAll('.page').forEach(function (p) {
     p.classList.remove('active');
   });
-  // Show target
   var target = document.getElementById('page-' + name);
   if (target) {
     target.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  // Update nav active state
   document.querySelectorAll('.nav-item').forEach(function (n) {
     n.classList.remove('active');
   });
   if (name === 'home') {
-    document.querySelector('.nav-item') && document.querySelector('.nav-item').classList.add('active');
+    var first = document.querySelector('.nav-item');
+    if (first) first.classList.add('active');
   }
-  // Pre-select service if provided
   if (preselect && name === 'order') {
     setTimeout(function () {
       var tile = document.getElementById('svc-' + preselect);
@@ -84,7 +226,6 @@ function submitOrder() {
     return;
   }
 
-  // Mark step 3 active
   document.querySelectorAll('.oi-step').forEach(function (s, i) {
     s.classList.remove('active');
     if (i < 2) s.classList.add('done');
@@ -92,7 +233,6 @@ function submitOrder() {
   var s3 = document.getElementById('step3-indicator');
   if (s3) s3.classList.add('active');
 
-  // Toast
   var toast = document.getElementById('toast');
   toast.classList.add('show');
   launchConfetti();
@@ -126,9 +266,7 @@ function showAlert(msg) {
     'transition:transform 0.3s cubic-bezier(0,0,0.2,1);pointer-events:none;';
   a.textContent = '⚠  ' + msg;
   document.body.appendChild(a);
-  setTimeout(function () {
-    a.style.transform = 'translateX(-50%) translateY(0)';
-  }, 10);
+  setTimeout(function () { a.style.transform = 'translateX(-50%) translateY(0)'; }, 10);
   setTimeout(function () {
     a.style.transform = 'translateX(-50%) translateY(-70px)';
     setTimeout(function () { a.remove(); }, 300);
