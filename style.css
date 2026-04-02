@@ -31,9 +31,7 @@
   --header-h: 64px;
 }
 
-*,
-*::before,
-*::after {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -296,6 +294,7 @@ body {
   display: flex;
   align-items: center;
   gap: 24px;
+  min-height: 60px;
 }
 
 .logo {
@@ -307,9 +306,8 @@ body {
 }
 
 .logo-icon {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
 }
 
 .logo-text {
@@ -319,7 +317,7 @@ body {
 
 .logo-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   color: var(--ink);
@@ -456,6 +454,10 @@ body {
 .mobile-nav {
   display: none;
   flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   background: rgba(246, 245, 240, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -1525,6 +1527,13 @@ body {
 /* 16px min prevents iOS keyboard zoom */
 @media (max-width: 600px) {
 
+
+
+  :root {
+    --header-h: 60px;
+    /* reduce from 60px */
+  }
+
   .form-field input,
   .form-field select,
   .form-field textarea {
@@ -1808,7 +1817,7 @@ body {
 @media (max-width: 600px) {
 
   :root {
-    --header-h: 60px;
+    --header-h: 12px;
   }
 
   .logo-sub {
